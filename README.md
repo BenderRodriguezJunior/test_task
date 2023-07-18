@@ -49,3 +49,121 @@ var_dump($actual_output == $expected_output);
 echo $actual_output;
 ```
 ---
+## Задача №3 ##
+Напишите код в парадигме ООП, соответствующий следующей структуре.  
+__Сущности:__ Пользователь, Статья
+
+__Связи:__
+- Один пользователь может написать несколько статей.
+- У каждой статьи может быть только один пользователь-автор.
+
+__Функциональность:__
+- возможность для пользователя создать новую статью;
+- возможность получить автора статьи;
+- возможность получить все статьи конкретного пользователя;
+- возможность сменить автора статьи.
+
+Если вы применили какие-либо паттерны при написании, укажите какие и с какой целью.  
+Код, реализующий конкретную функциональность, не требуется, только общая структура классов и методов.  
+Код должен быть прокомментирован в стиле PHPDoc.
+
+### Решение: ###
+
+[Файл с решением.](https://github.com/BenderRodriguezJunior/test_task/blob/main/src/task_3.php)
+
+```php
+<?php
+class User {
+    /**
+     * @var int Идентификатор пользователя.
+     */
+    private $user_id;
+
+    /**
+     * @var string Имя пользователя.
+     */
+    private $name;
+
+    /**
+     * Конструктор пользователя.
+     *
+     * @param int    $user_id Идентификатор пользователя.
+     * @param string $name    Имя пользователя.
+     */
+    public function __construct($user_id, $name) {
+        $this->user_id = $user_id;
+        $this->name = $name;
+    }
+
+    /**
+     * Создание новой статьи пользователем.
+     *
+     * @param string $title   Заголовок статьи.
+     * @param string $content Содержимое статьи.
+     *
+     * @return Article Созданная статья.
+     */
+    public function createArticle($title, $content) {
+        $article = new Article($title, $content, $this);
+        return $article;
+    }
+
+    /**
+     * Получение всех статей пользователя.
+     *
+     * @return array Список статей пользователя.
+     */
+    public function getArticles() {
+        // Реализация получения статей пользователя
+    }
+}
+
+class Article {
+    /**
+     * @var string Заголовок статьи.
+     */
+    private $title;
+
+    /**
+     * @var string Содержимое статьи.
+     */
+    private $content;
+
+    /**
+     * @var User Автор статьи.
+     */
+    private $author;
+
+    /**
+     * Конструктор статьи.
+     *
+     * @param string $title   Заголовок статьи.
+     * @param string $content Содержимое статьи.
+     * @param User   $author  Автор статьи.
+     */
+    public function __construct($title, $content, $author) {
+        $this->title = $title;
+        $this->content = $content;
+        $this->author = $author;
+    }
+
+    /**
+     * Получение автора статьи.
+     *
+     * @return User Автор статьи.
+     */
+    public function getAuthor() {
+        return $this->author;
+    }
+
+    /**
+     * Смена автора статьи.
+     *
+     * @param User $new_author Новый автор статьи.
+     */
+    public function changeAuthor($new_author) {
+        $this->author = $new_author;
+    }
+}
+```
+---
