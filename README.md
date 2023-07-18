@@ -15,6 +15,7 @@ https://www.somehost.com/?param4=1&param3=2&param1=4&url=%2Ftest%2Findex.html
 
 ### Решение: ###
 
+[Файл с решением.](https://github.com/BenderRodriguezJunior/test_task/blob/main/src/task_2.php)
 
 ```php
 <?php
