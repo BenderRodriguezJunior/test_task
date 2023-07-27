@@ -1,93 +1,118 @@
 <?php
-class User {
-    /**
-     * @var int Идентификатор пользователя.
-     */
-    private $user_id;
 
-    /**
-     * @var string Имя пользователя.
-     */
-    private $name;
+class Article
+{
+    private string $art_title;
+    private string $art_content;
+    private string $art_author;
+    private int $art_author_id;
 
-    /**
-     * Конструктор пользователя.
-     *
-     * @param int    $user_id Идентификатор пользователя.
-     * @param string $name    Имя пользователя.
-     */
-    public function __construct($user_id, $name) {
-        $this->user_id = $user_id;
+    public function __construct(string $title, string $content, object $User)
+    {
+        $this->art_title = $title;
+        $this->art_content = $content;
+        $this->art_author = $User->getName();
+        $this->art_author_id = $User->getId();
+    }
+
+    public function get_title(): string
+    {
+        return $this->art_title;
+    }
+
+    public function get_author(): string
+    {
+        return $this->art_author;
+    }
+
+    public function get_author_id(): int
+    {
+        return $this->art_author_id;
+    }
+
+    public function get_content(): string
+    {
+        return $this->art_content;
+    }
+
+    function set_author($User): void
+    {
+        $this->art_author = $User->getName();
+        $this->art_author_id = $User->getId();
+    }
+}
+
+class User
+{
+    private int $user_id;
+    private string $name;
+
+    private array $storage;
+
+    public function __construct($name)
+    {
         $this->name = $name;
+        $this->user_id = spl_object_id($this);
+        $this->storage = [];
     }
 
-    /**
-     * Создание новой статьи пользователем.
-     *
-     * @param string $title   Заголовок статьи.
-     * @param string $content Содержимое статьи.
-     *
-     * @return Article Созданная статья.
-     */
-    public function createArticle($title, $content) {
-        $article = new Article($title, $content, $this);
-        return $article;
+    public function getId():string
+    {
+        return $this->user_id;
     }
 
-    /**
-     * Получение всех статей пользователя.
-     *
-     * @return array Список статей пользователя.
-     */
-    public function getArticles() {
-        // Реализация получения статей пользователя
-    }
-}
-
-class Article {
-    /**
-     * @var string Заголовок статьи.
-     */
-    private $title;
-
-    /**
-     * @var string Содержимое статьи.
-     */
-    private $content;
-
-    /**
-     * @var User Автор статьи.
-     */
-    private $author;
-
-    /**
-     * Конструктор статьи.
-     *
-     * @param string $title   Заголовок статьи.
-     * @param string $content Содержимое статьи.
-     * @param User   $author  Автор статьи.
-     */
-    public function __construct($title, $content, $author) {
-        $this->title = $title;
-        $this->content = $content;
-        $this->author = $author;
+    public function getName():string
+    {
+        return $this->name;
     }
 
-    /**
-     * Получение автора статьи.
-     *
-     * @return User Автор статьи.
-     */
-    public function getAuthor() {
-        return $this->author;
+    public function getArticles():array
+    {
+        return $this->storage;
     }
 
-    /**
-     * Смена автора статьи.
-     *
-     * @param User $new_author Новый автор статьи.
-     */
-    public function changeAuthor($new_author) {
-        $this->author = $new_author;
+    public function makeArticle($title, $content): object
+    {
+        $user_art = new Article($title, $content, $this);
+        $this->storage[] = $user_art;
+        return $user_art;
+
+    }
+
+    public function changeAuthor(object $Article, object $User): void
+    {
+        if ($this->user_id == $Article->get_author_id()) {
+            $Article->set_author($User);
+            $User->storage[] = $Article;
+            foreach ($this->storage as $key => $item){
+                if ($item == $Article){
+                    unset($this->storage[$key]);
+                }
+            }
+
+        } else {
+            var_dump("Статья не принадлежит автору.");
+        }
     }
 }
+
+
+$user1 = new User('Гомер');
+$user2 = new User('Эзоп');
+$user3 = new User('Евклид');
+
+var_dump($user1);
+var_dump($user2);
+var_dump($user3);
+
+$first_art = $user1->makeArticle("Заголовок 1", "бла-бла-бла");
+$second_art = $user2->makeArticle("Заголовок 2", "бла-бла-бла-бла");
+$third_art = $user3->makeArticle("Заголовок 3", "бла-бла-бла-бла-бла");
+
+$user1->changeAuthor($first_art, $user2);
+$user2->changeAuthor($second_art, $user3);
+$user3->changeAuthor($third_art, $user1);
+
+var_dump($user1);
+var_dump($user2);
+var_dump($user3);
